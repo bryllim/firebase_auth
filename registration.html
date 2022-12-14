@@ -19,7 +19,19 @@
         <div class="col-md-6 border p-5 rounded mx-auto">
           <h1>Registration</h1>
             <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label"
+              <div class="mb-3">
+                <label class="form-label"
+                  >Full name</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="displayName"
+                  aria-describedby="emailHelp"
+                  required
+                />
+              </div>
+              <label class="form-label"
                 >Email address</label
               >
               <input
@@ -67,6 +79,7 @@
       import {
         getAuth,
         createUserWithEmailAndPassword,
+        updateProfile
       } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
       // TODO: Add SDKs for Firebase products that you want to use
       // https://firebase.google.com/docs/web/setup#available-libraries
@@ -89,21 +102,21 @@
       /*---------------------------------------------------------------- */
 
       const registrationForm = document.getElementById("registrationForm");
-      let email = "";
-      let password = "";
-      let confirmPassword = "";
 
       registrationForm.addEventListener("click", () => {
-        email = document.getElementById("userEmail").value;
-        password = document.getElementById("userPassword").value;
-        confirmPassword = document.getElementById("confirmPassword").value;
+        const email = document.getElementById("userEmail").value;
+        const password = document.getElementById("userPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        const displayName = document.getElementById("displayName").value;
+
         if(password === confirmPassword) {
           const auth = getAuth();
           createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-              // Signed in
-              const user = userCredential.user;
-              window.location.replace("login.html");
+            .then(() => {
+              updateProfile(auth.currentUser, {
+                displayName: displayName
+              });
+              window.location.replace("index.html");
             })
             .catch((error) => {
               const errorCode = error.code;

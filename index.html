@@ -18,38 +18,46 @@
       <div class="row">
         <div class="col-md-6 border p-5 rounded mx-auto">
           <h1>Login</h1>
-          <form>
-            <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label"
-                >Email address</label
-              >
-              <input
-                type="email"
-                class="form-control"
-                id="userEmail"
-                aria-describedby="emailHelp"
-                required
-              />
-              <div id="emailHelp" class="form-text">
-                We'll never share your email with anyone else.
-              </div>
+          <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label"
+              >Email address</label
+            >
+            <input
+              type="email"
+              class="form-control"
+              id="userEmail"
+              aria-describedby="emailHelp"
+              required
+            />
+            <div id="emailHelp" class="form-text">
+              We'll never share your email with anyone else.
             </div>
-            <div class="mb-3">
-              <label for="exampleInputPassword1" class="form-label"
-                >Password</label
-              >
-              <input
-                type="password"
-                class="form-control"
-                id="userPassword"
-                required
-              />
-            </div>
-            <button type="button" id="loginForm" class="btn btn-primary">
-              Login
-            </button>
-            <a href="registration.html" class="ms-4">Don't have an account? Create one here.</a>
-          </form>
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label"
+              >Password</label
+            >
+            <input
+              type="password"
+              class="form-control"
+              id="userPassword"
+              required
+            />
+          </div>
+          <button type="button" id="loginForm" class="btn btn-primary">
+            Login
+          </button>
+          <a href="registration.html" class="ms-4"
+            >Don't have an account? Create one here.</a
+          >
+          <hr />
+          <a href="#" id="googleLogin">
+            <img
+              style="height: auto; width: 50%"
+              src="https://i.stack.imgur.com/JkSed.png"
+              alt=""
+            />
+          </a>
         </div>
       </div>
     </div>
@@ -59,6 +67,8 @@
       import {
         getAuth,
         signInWithEmailAndPassword,
+        GoogleAuthProvider,
+        signInWithPopup,
       } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
       // TODO: Add SDKs for Firebase products that you want to use
       // https://firebase.google.com/docs/web/setup#available-libraries
@@ -79,31 +89,54 @@
       const app = initializeApp(firebaseConfig);
 
       /*---------------------------------------------------------------- */
+      const provider = new GoogleAuthProvider();
 
       const loginForm = document.getElementById("loginForm");
+      const googleLogin = document.getElementById("googleLogin");
+
       let email = "";
       let password = "";
+
+      const auth = getAuth();
 
       loginForm.addEventListener("click", () => {
         email = document.getElementById("userEmail").value;
         password = document.getElementById("userPassword").value;
 
-        const auth = getAuth();
-
         signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // Signed in 
-          const user = userCredential.user;
-          window.location.replace("dashboard.html");
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          alert(error);
-        });
-
+          .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            window.location.replace("dashboard.html");
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            alert(error);
+          });
       });
 
+      googleLogin.addEventListener("click", () => {
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            // The signed-in user info.
+            const user = result.user;
+            window.location.replace("dashboard.html");
+          })
+          .catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            alert(error);
+          });
+      });
     </script>
   </body>
 </html>

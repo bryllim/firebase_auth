@@ -18,11 +18,13 @@
       <div class="row">
         <div class="col-md-6 border p-5 rounded mx-auto">
           <h1><strong>Dashboard</strong></h1>
-          <h5 id="userEmail"></h5>
+          <h4>Hello, <span id="displayName"></span></h4>
+          <h6 id="userEmail"></h6>
           <p><a href="#" style="text-decoration: none" id="logout">← Logout</a></p>
           <hr />
           <div class="text-center">
-            <h1 class="m-5 fw-bold">10:30 AM</h1>
+            <span class="badge bg-light text-dark" id="calendar"></span>
+            <h1 class="mb-4 fw-bold" id="clock"></h1>
             <button class="btn btn-lg btn-dark p-5">🕘 Time In</button>
             <button class="btn btn-lg btn-dark p-5" disabled>
               🕡 Time Out
@@ -75,7 +77,7 @@
 
       logout.addEventListener("click", () => {
         signOut(auth).then(() => {
-          window.location.replace("login.html");
+          window.location.replace("index.html");
         }).catch((error) => {
           alert(error);
         });
@@ -87,12 +89,22 @@
           // https://firebase.google.com/docs/reference/js/firebase.User
           const uid = user.uid;
           document.getElementById("userEmail").innerHTML = user.email;
+          document.getElementById("displayName").innerHTML = user.displayName;
 
           // ...
         } else {
-          window.location.replace("login.html");
+          window.location.replace("index.html");
         }
       });
+
+      // Clock
+      setInterval(() => {
+        document.getElementById("clock").innerHTML = new Date().toLocaleTimeString();
+      },1000);
+      document.getElementById("calendar").innerHTML = new Date().toLocaleDateString('default', { month: 'long',
+  day: 'numeric',
+  year: 'numeric' });
+      
 
     </script>
   </body>
